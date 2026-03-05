@@ -1,10 +1,14 @@
 import { GoogleGenAI } from "@google/genai";
 
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
-const ai = new GoogleGenAI({ apiKey });
-
 export const generateCeramahStream = async (theme: string, duration: string, type: string, customOutline: string, onChunk: (chunk: string) => void) => {
-  const model = "gemini-3.1-pro-preview";
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  
+  if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey.trim() === "") {
+    throw new Error("API Key Gemini belum dikonfigurasi. Pastikan VITE_GEMINI_API_KEY sudah diatur di Environment Variables.");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
+  const model = "gemini-3-flash-preview";
   
   const prompt = `Anda adalah seorang ulama Ahlussunnah wal Jama'ah yang alim. 
 Buatlah naskah ceramah lengkap dengan ketentuan berikut:

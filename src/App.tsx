@@ -24,6 +24,10 @@ import html2canvas from 'html2canvas';
 export default function App() {
   useEffect(() => {
     console.log("App component mounted");
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey.trim() === "") {
+      setError("Peringatan: API Key Gemini belum terdeteksi. Silakan atur VITE_GEMINI_API_KEY di Environment Variables Vercel agar aplikasi dapat berfungsi.");
+    }
   }, []);
 
   const [theme, setTheme] = useState('');
@@ -49,8 +53,8 @@ export default function App() {
       await generateCeramahStream(theme, duration, type, customOutline, (chunk) => {
         setResult(chunk);
       });
-    } catch (err) {
-      setError('Gagal menghasilkan ceramah. Silakan coba lagi.');
+    } catch (err: any) {
+      setError(err.message || 'Gagal menghasilkan ceramah. Silakan coba lagi.');
       console.error(err);
     } finally {
       setLoading(false);
