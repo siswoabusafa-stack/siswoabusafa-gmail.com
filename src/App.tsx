@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
-import { generateCeramah } from './services/geminiService';
+import { generateCeramahStream } from './services/geminiService';
 import { cn } from './lib/utils';
 import { Document, Packer, Paragraph, TextRun, AlignmentType, HeadingLevel } from 'docx';
 import { saveAs } from 'file-saver';
@@ -42,8 +42,9 @@ export default function App() {
     setResult('');
     
     try {
-      const text = await generateCeramah(theme, duration, type, customOutline);
-      setResult(text || '');
+      await generateCeramahStream(theme, duration, type, customOutline, (chunk) => {
+        setResult(chunk);
+      });
     } catch (err) {
       setError('Gagal menghasilkan ceramah. Silakan coba lagi.');
       console.error(err);

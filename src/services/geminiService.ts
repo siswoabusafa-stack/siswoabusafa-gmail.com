@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
-export const generateCeramah = async (theme: string, duration: string, type: string, customOutline: string) => {
+export const generateCeramahStream = async (theme: string, duration: string, type: string, customOutline: string, onChunk: (chunk: string) => void) => {
   const model = "gemini-3.1-pro-preview";
   
   const prompt = `Anda adalah seorang ulama Ahlussunnah wal Jama'ah yang alim. 
@@ -23,13 +23,22 @@ Buatlah naskah ceramah lengkap dengan ketentuan berikut:
 Gunakan bahasa yang santun, hikmah, dan sesuai dengan manhaj Salafush Sholeh. Pastikan rujukan hadits disebutkan sumbernya (misal: HR. Bukhari, Muslim, dll).`;
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await ai.models.generateContentStream({
       model: model,
       contents: [{ parts: [{ text: prompt }] }],
     });
-    return response.text;
+
+    let fullText = "";
+    for await (const chunk of response) {
+      const text = chunk.text;
+      if (text) {
+        fullText += text;
+        onChunk(fullText);
+      }
+    }
+    return fullText;
   } catch (error) {
-    console.error("Error generating ceramah:", error);
+    console.error("Error generating ceramah stream:", error);
     throw error;
   }
 };
