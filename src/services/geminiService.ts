@@ -1,6 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+const ai = new GoogleGenAI({ apiKey });
 
 export const generateCeramahStream = async (theme: string, duration: string, type: string, customOutline: string, onChunk: (chunk: string) => void) => {
   const model = "gemini-3.1-pro-preview";

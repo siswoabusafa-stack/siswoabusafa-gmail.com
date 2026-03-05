@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   BookOpen, 
   Download, 
@@ -22,6 +22,10 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 export default function App() {
+  useEffect(() => {
+    console.log("App component mounted");
+  }, []);
+
   const [theme, setTheme] = useState('');
   const [duration, setDuration] = useState('15 Menit');
   const [type, setType] = useState('Ceramah Umum');
